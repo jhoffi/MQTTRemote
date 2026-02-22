@@ -218,6 +218,22 @@ void MQTTRemote::start(EventGroupHandle_t connection_state_changed_event_group) 
   startInternal();
 }
 
+void MQTTRemote::stop() {
+  if (!_started) {
+    ESP_LOGW(MQTTRemoteLog::TAG, "Not started, cannot stop.");
+    return;
+  }
+
+  publishMessageVerbose(_last_will_topic, "offline", true);
+
+  ESP_ERROR_CHECK(esp_mqtt_client_unregister_event(_mqtt_client, MQTT_EVENT_ANY, onMqttEvent));
+  ESP_ERROR_CHECK(esp_mqtt_client_disconnect(_mqtt_client));
+  ESP_ERROR_CHECK(esp_mqtt_client_stop(_mqtt_client));
+
+  _started = false;
+  _connected = false;
+}
+
 void MQTTRemote::startInternal() {
   xEventGroupClearBits(_connection_state_changed_event_group, 0xFF);
   ESP_ERROR_CHECK(esp_mqtt_client_register_event(_mqtt_client, MQTT_EVENT_ANY, onMqttEvent, this));

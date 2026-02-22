@@ -202,6 +202,11 @@ public:
   void start(EventGroupHandle_t connection_state_changed_event_group);
 
   /**
+   * @brief Stop MQTT connection and MQTT loop.
+   */
+  void stop();
+
+  /**
    * @brief Publish a message.
    *
    * @param topic the topic to publish to.
