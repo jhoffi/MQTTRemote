@@ -183,12 +183,14 @@ public:
    * be set.
    * @param task_size the stack size for the task that will call the on_connection_change callback, if set.
    * @param task_priority the priority for the task that will call the on_connection_change callback, if set.
+   * @param core_id the core on which to run the task on. If set to tskNO_AFFINITY, the task is not pinned to any core.
    *
    * NOTE: Can only be called once WIFI has been setup! ESP-IDF will assert otherwise.
    */
   void start(std::function<void(bool)> on_connection_change = {},
              unsigned long task_size = MQTTRemoteDefaults::CONNECTION_STATUS_STACK_SIZE,
-             uint8_t task_priority = MQTTRemoteDefaults::CONNECTION_STATUS_TASK_PRIORITY);
+             uint8_t task_priority = MQTTRemoteDefaults::CONNECTION_STATUS_TASK_PRIORITY
+             BaseType_t core_id = tskNO_AFFINITY);
 
   /**
    * @brief Call once there is a WIFI connection on which the host can be reached.
@@ -257,7 +259,7 @@ public:
   std::string &clientId() override { return _client_id; }
 
 private:
-  void startInternal();
+  void startInternal(BaseType_t core_id = tskNO_AFFINITY);
 
   /*
    * @brief Event handler registered to receive MQTT events

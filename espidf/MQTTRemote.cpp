@@ -191,7 +191,7 @@ MQTTRemote::MQTTRemote(std::string client_id, std::string host, int port, std::s
   _mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
 }
 
-void MQTTRemote::start(std::function<void(bool)> on_connection_change, unsigned long task_size, uint8_t task_priority) {
+void MQTTRemote::start(std::function<void(bool)> on_connection_change, unsigned long task_size, uint8_t task_priority, BaseType_t core_id) {
   if (_started) {
     ESP_LOGW(MQTTRemoteLog::TAG, "Already started, cannot start again.");
     return;
@@ -201,10 +201,10 @@ void MQTTRemote::start(std::function<void(bool)> on_connection_change, unsigned 
 
   _on_connection_change = on_connection_change;
   if (_on_connection_change) {
-    xTaskCreate(&runTask, "MQTTRemote_main_task", task_size, this, task_priority, NULL);
+    xTaskCreatePinnedToCore(&runTask, "MQTTRemote_main_task", task_size, this, task_priority, NULL, core_id);
   }
 
-  startInternal();
+  startInternal(core_id);
 }
 
 void MQTTRemote::start(EventGroupHandle_t connection_state_changed_event_group) {
