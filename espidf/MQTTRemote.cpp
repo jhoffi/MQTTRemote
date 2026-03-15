@@ -135,7 +135,7 @@ MQTTRemote::MQTTRemote(std::string client_id, std::string host, int port, std::s
   mqtt_cfg.credentials.authentication.password = password.c_str();
 
   mqtt_cfg.network.reconnect_timeout_ms = RETRY_CONNECT_WAIT_MS;
-  mqtt_cfg.network.disable_auto_reconnect = false;
+  mqtt_cfg.network.disable_auto_reconnect = !configuration.auto_reconnect;
 
   mqtt_cfg.session.keepalive = configuration.keep_alive_s;
   mqtt_cfg.session.disable_keepalive = false;
@@ -144,6 +144,8 @@ MQTTRemote::MQTTRemote(std::string client_id, std::string host, int port, std::s
   mqtt_cfg.session.last_will.msg = LAST_WILL_MSG;
   mqtt_cfg.session.last_will.qos = 0;
   mqtt_cfg.session.last_will.retain = 0;
+
+  mqtt_cfg.task.priority = configuration.mqtt_task_priority;
 
   if (configuration.task_size) {
     mqtt_cfg.task.stack_size = *configuration.task_size;
@@ -172,7 +174,7 @@ MQTTRemote::MQTTRemote(std::string client_id, std::string host, int port, std::s
   mqtt_cfg.password = password.c_str();
 
   mqtt_cfg.reconnect_timeout_ms = RETRY_CONNECT_WAIT_MS;
-  mqtt_cfg.disable_auto_reconnect = false;
+  mqtt_cfg.disable_auto_reconnect = !configuration.auto_reconnect;
 
   mqtt_cfg.keepalive = configuration.keep_alive_s;
   mqtt_cfg.disable_keepalive = false;
@@ -182,6 +184,8 @@ MQTTRemote::MQTTRemote(std::string client_id, std::string host, int port, std::s
   mqtt_cfg.lwt_msg_len = sizeof(LAST_WILL_MSG) - 1;
   mqtt_cfg.lwt_qos = 0;
   mqtt_cfg.lwt_retain = 0;
+
+  mqtt_cfg.task.priority = configuration.mqtt_task_priority;
 
   if (configuration.task_size) {
     mqtt_cfg.task_stack = *configuration.task_size;

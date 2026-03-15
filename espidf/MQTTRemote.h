@@ -18,6 +18,7 @@ const char TAG[] = "MQTTRemote";
 namespace MQTTRemoteDefaults {
 const uint32_t CONNECTION_STATUS_STACK_SIZE = 4096;
 const uint32_t CONNECTION_STATUS_TASK_PRIORITY = 7;
+const int MQTT_TASK_PRIORITY = 5;
 } // namespace MQTTRemoteDefaults
 
 /**
@@ -76,6 +77,17 @@ public:
      * Keep Alive period, the LWT/Last Will message is sent (by the broker).
      */
     uint32_t keep_alive_s = 10;
+
+    /**
+     * Whether to automatically reconnect when the connection is lost. If false, the client will not attempt to
+     * reconnect and will stay disconnected until start() is called again.
+     */
+    bool auto_reconnect = true;
+
+    /**
+     * The task priority to use for the MQTT task.
+     */
+    int mqtt_task_priority = MQTTRemoteDefaults::MQTT_TASK_PRIORITY;
 
     /**
      * Values, see esp_mqtt_transport_t:
